@@ -8,10 +8,12 @@ Test cases can be run with the following:
 import os
 import logging
 from unittest import TestCase
+
 from tests.factories import AccountFactory
 from service.common import status  # HTTP Status Codes
 from service.models import db, Account, init_db
 from service.routes import app
+
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI",
@@ -19,6 +21,8 @@ DATABASE_URI = os.getenv(
 )
 
 BASE_URL = "/accounts"
+
+HTTPS_ENVIRON = {"wsgi.url_scheme": "https"}
 
 
 ######################################################################
@@ -90,6 +94,38 @@ class TestAccountService(TestCase):
         self.assertEqual(
             response.status_code,
             status.HTTP_200_OK,
+        )
+
+    def test_security_headers(self):
+        """It should return the required security headers"""
+        response = self.client.get(
+            "/",
+            environ_overrides=HTTPS_ENVIRON,
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        self.assertEqual(
+            response.headers["X-Frame-Options"],
+            "SAMEORIGIN",
+        )
+
+        self.assertEqual(
+            response.headers["X-Content-Type-Options"],
+            "nosniff",
+        )
+
+        self.assertEqual(
+            response.headers["Content-Security-Policy"],
+            "default-src 'self'; object-src 'none'",
+        )
+
+        self.assertEqual(
+            response.headers["Referrer-Policy"],
+            "strict-origin-when-cross-origin",
         )
 
     def test_health(self):
@@ -324,7 +360,6 @@ class TestAccountService(TestCase):
             status.HTTP_204_NO_CONTENT,
         )
 
-        # Verify that the account was deleted
         response = self.client.get(
             f"{BASE_URL}/{test_account.id}"
         )

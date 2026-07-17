@@ -6,9 +6,24 @@ This microservice handles the lifecycle of Accounts
 
 # pylint: disable=unused-import
 from flask import jsonify, request, make_response, abort, url_for  # noqa: F401
+from flask_talisman import Talisman
+
 from service.models import Account
 from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
+
+
+######################################################################
+# SECURITY CONFIGURATION
+######################################################################
+Talisman(
+    app,
+    force_https=False,
+    content_security_policy={
+        "default-src": "'self'",
+        "object-src": "'none'",
+    },
+)
 
 
 ############################################################
