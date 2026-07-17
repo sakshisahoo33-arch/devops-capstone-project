@@ -14,7 +14,8 @@ from service.models import db, Account, init_db
 from service.routes import app
 
 DATABASE_URI = os.getenv(
-    "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres"
+    "DATABASE_URI",
+    "postgresql://postgres:postgres@localhost:5432/postgres",
 )
 
 BASE_URL = "/accounts"
@@ -37,7 +38,7 @@ class TestAccountService(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Runs once before test suite"""
+        """Runs once after all tests"""
 
     def setUp(self):
         """Runs before each test"""
@@ -304,4 +305,31 @@ class TestAccountService(TestCase):
         self.assertEqual(
             data["name"],
             "Updated Name",
+        )
+
+    ######################################################################
+    #  D E L E T E   A C C O U N T   T E S T S
+    ######################################################################
+
+    def test_delete_account(self):
+        """It should Delete an existing Account"""
+        test_account = self._create_accounts(1)[0]
+
+        response = self.client.delete(
+            f"{BASE_URL}/{test_account.id}"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT,
+        )
+
+        # Verify that the account was deleted
+        response = self.client.get(
+            f"{BASE_URL}/{test_account.id}"
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_404_NOT_FOUND,
         )
