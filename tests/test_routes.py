@@ -242,3 +242,33 @@ class TestAccountService(TestCase):
             response.status_code,
             status.HTTP_405_METHOD_NOT_ALLOWED,
         )
+
+    ######################################################################
+    #  L I S T   A C C O U N T S   T E S T S
+    ######################################################################
+
+    def test_list_all_accounts(self):
+        """It should List all Accounts"""
+        test_accounts = self._create_accounts(5)
+
+        response = self.client.get(BASE_URL)
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        data = response.get_json()
+
+        self.assertEqual(
+            len(data),
+            len(test_accounts),
+        )
+
+        for account in data:
+            self.assertIn("id", account)
+            self.assertIn("name", account)
+            self.assertIn("email", account)
+            self.assertIn("address", account)
+            self.assertIn("phone_number", account)
+            self.assertIn("date_joined", account)

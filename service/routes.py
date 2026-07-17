@@ -3,8 +3,9 @@ Account Service
 
 This microservice handles the lifecycle of Accounts
 """
+
 # pylint: disable=unused-import
-from flask import jsonify, request, make_response, abort, url_for  # noqa; F401
+from flask import jsonify, request, make_response, abort, url_for  # noqa: F401
 from service.models import Account
 from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
@@ -29,7 +30,7 @@ def index():
         jsonify(
             name="Account REST API Service",
             version="1.0",
-            # paths=url_for("list_accounts", _external=True),
+            paths=url_for("list_accounts", _external=True),
         ),
         status.HTTP_200_OK,
     )
@@ -72,8 +73,22 @@ def create_accounts():
 ######################################################################
 # LIST ALL ACCOUNTS
 ######################################################################
+@app.route("/accounts", methods=["GET"])
+def list_accounts():
+    """
+    Lists all Accounts
 
-# ... place your code here to LIST accounts ...
+    This endpoint returns all Accounts.
+    """
+    app.logger.info("Request to list all Accounts")
+
+    accounts = Account.all()
+    results = [account.serialize() for account in accounts]
+
+    return make_response(
+        jsonify(results),
+        status.HTTP_200_OK,
+    )
 
 
 ######################################################################
