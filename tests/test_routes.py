@@ -272,3 +272,36 @@ class TestAccountService(TestCase):
             self.assertIn("address", account)
             self.assertIn("phone_number", account)
             self.assertIn("date_joined", account)
+
+    ######################################################################
+    #  U P D A T E   A C C O U N T   T E S T S
+    ######################################################################
+
+    def test_update_account(self):
+        """It should Update an existing Account"""
+        test_account = self._create_accounts(1)[0]
+
+        test_account.name = "Updated Name"
+
+        response = self.client.put(
+            f"{BASE_URL}/{test_account.id}",
+            json=test_account.serialize(),
+            content_type="application/json",
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+        )
+
+        data = response.get_json()
+
+        self.assertEqual(
+            data["id"],
+            test_account.id,
+        )
+
+        self.assertEqual(
+            data["name"],
+            "Updated Name",
+        )
