@@ -7,6 +7,4 @@ This project demonstrates Agile planning, Test-Driven Development (TDD), Continu
 
 # devops-capstone-project
 
-![Build Status](https://github.com/sakshisahoo33-arch/devops-capstone-project/actions/workflows/ci-build.yaml/badge.svg)
-
-...
+https://github.com/sakshisahoo33-arch/devops-capstone-project/blob/main/README.md
