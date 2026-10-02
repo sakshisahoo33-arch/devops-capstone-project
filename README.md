@@ -1,5 +1,5 @@
 # devops-capstone-project
-IBM Capstone Project 
+
 This repository contains the Customer Accounts Microservice developed as part of the IBM DevOps Capstone Project.
 
 ## Project Overview
